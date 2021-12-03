@@ -77,7 +77,7 @@ class Robot:
         """
         cmd_vel = Twist()
         cmd_vel.linear.x = self.constraint(linear)
-        cmd_vel.angular.z = self.constraint(angular, min=-1, max=-1)
+        cmd_vel.angular.z = self.constraint(angular, min=-1, max=1)
         self.cmd_vel_pub.publish(cmd_vel)
 
 
