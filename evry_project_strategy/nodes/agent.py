@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-
+#!/usr/bin/env python
+from __future__ import print_function
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
 from sensor_msgs.msg import Range
