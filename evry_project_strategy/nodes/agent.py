@@ -2,7 +2,7 @@
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
 from sensor_msgs.msg import Range
-from nav_msgs import Odometry
+from nav_msgs.msg import Odometry
 
 from evry_project_plugins.srv import DistanceToFlag
 
@@ -45,7 +45,7 @@ class Robot:
         """Method that returns the distance separating the ultrasonic sensor from a potential obstacle
         """
         return self.sonar
-        
+
 
     def callbackPose(self, msg):
         """Callback function that gets the data coming from the ultrasonic sensor
