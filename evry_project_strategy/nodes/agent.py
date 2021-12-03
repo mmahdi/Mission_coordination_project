@@ -27,8 +27,6 @@ class Robot:
         rospy.Subscriber(self.robot_name + "/odom", Odometry, self.callbackPose)
         self.cmd_vel_pub = rospy.Publisher(self.robot_name + "/cmd_vel", Twist, queue_size = 1)
 
-        self.pub_velocity() #Run the publisher once
-
 
     def callbackSonar(self,msg):
         """Callback function that gets the data coming from the ultrasonic sensor
