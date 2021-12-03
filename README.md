@@ -1,6 +1,6 @@
 # Mission_coordination_project
 
-Connect to [RDS](https://app.theconstructsim.com/#/) with your user and password.
+Connect to [RDS](https://app.theconstructsim.com/#/) with your logins.
 
 Go to "My rosjects" and run the project that you created.
 
