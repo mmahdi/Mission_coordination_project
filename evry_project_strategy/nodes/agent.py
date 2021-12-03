@@ -1,55 +1,61 @@
-#!/usr/bin/env python
-from __future__ import print_function
+#!/usr/bin/env python3
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
 from sensor_msgs.msg import Range
+from nav_msgs import Odometry
 
 from evry_project_plugins.srv import DistanceToFlag
 
 class Robot:
-    def __init__(self, group, robot_name, nb_flags):
+    def __init__(self, robot_name):
         """Constructor of the class Robot
         The required publishers / subscribers are created.
         The attributes of the class are initialized
 
         Args:
-            group ([type]): [description]
-            robot_name ([type]): [description]
-            nb_flags ([type]): [description]
+            robot_name (str): Name of the robot, like robot_1, robot_2 etc. To be used for your subscriber and publisher with the robot itself
         """
         self.speed = 0.0
         self.angle = 0.0
         self.sonar = 0.0 #Sonar distance
 
-        #ns : Name of the robot, like robot_A1, robot_A2 etc.
+        #ns : Name of the robot, like robot_1, robot_2 etc.
         #To be used for your subscriber and publisher with the robot itself
-        self.group = group
         self.robot_name = robot_name
-        self.ns = self.group + "/" + self.robot_name
-
-        self.nb_flags = nb_flags    #Number of flags to discover in the environment
 
         '''Listener and publisher'''
 
-        rospy.Subscriber(self.ns + "/sensor/sonar_front", Range, self.callbacksonar)
-        self.cmd_vel_pub = rospy.Publisher(self.ns + "/cmd_vel", Twist, queue_size = 1)
+        rospy.Subscriber(self.robot_name + "/sensor/sonar_front", Range, self.callbackSonar)
+        rospy.Subscriber(self.robot_name + "/odom", Odometry, self.callbackPose)
+        self.cmd_vel_pub = rospy.Publisher(self.robot_name + "/cmd_vel", Twist, queue_size = 1)
 
         self.pub_velocity() #Run the publisher once
 
 
-    def callbacksonar(self,data):
+    def callbackSonar(self,msg):
         """Callback function that gets the data coming from the ultrasonic sensor
 
         Args:
-            data (float): distance separating the US sensor from a potential obstacle
+            msg (Range): Message that contains the distance separating the US sensor from a potential obstacle
         """
-        self.sonar = data.range
+        self.sonar = msg.range
 
 
     def get_sonar(self):
         """Method that returns the distance separating the ultrasonic sensor from a potential obstacle
         """
         return self.sonar
+        
+
+    def callbackPose(self, msg):
+        """Callback function that gets the data coming from the ultrasonic sensor
+
+        Args:
+            msg (Odometry): Message that contains the coordinates of the agent
+        """
+        self.x = msg.pose.pose.position.x
+        self.y = msg.pose.pose.position.y
+
 
 
     def set_speed_angle(self,speed,angle):
@@ -91,8 +97,8 @@ class Robot:
         try:
             service = rospy.ServiceProxy('/distanceToFlag', DistanceToFlag)
             pose = Pose2D()
-            pose.x = 0.0
-            pose.y = 0.0
+            pose.x = self.x
+            pose.y = self.y
             pose.theta = 0.0
             result = service(pose, int(self.robot_name[-1]))    #int(robot_name[-1]) corresponds to the id of the robot. It is also the id of the related flag
             return result.distance
@@ -102,24 +108,19 @@ class Robot:
 
 def run_demo():
     """Main loop"""
-    group = rospy.get_param("~group")
     robot_name = rospy.get_param("~robot_name")
-    nb_flags = rospy.get_param("nb_flags")
-    robot = Robot(group, robot_name, nb_flags)
-    print("Robot : " + str(robot_name) +" from Group : " + str(group) + " is starting..")
+    robot = Robot(robot_name)
+    print(f"Robot : {robot_name} is starting..")
 
 
     while not rospy.is_shutdown():
         #Write here your strategy..
-        print("SONAR VALUE FOR "+str(robot_name)+" :")
-        print(robot.get_sonar())
-
-        print("Distance to flag : ")
-        print(robot.getDistanceToFlag())
+        print("Distance to flag :", robot.getDistanceToFlag())
 
         velocity = 0
         angle = 0
         sonar = float(robot.get_sonar())
+        distance = float(robot.getDistanceToFlag())
 
 
         #Finishing by publishing the desired speed. DO NOT TOUCH.
