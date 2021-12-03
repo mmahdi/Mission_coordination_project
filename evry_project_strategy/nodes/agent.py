@@ -19,9 +19,6 @@ class Robot:
         self.angle = 0.0
         self.sonar = 0.0 #Sonar distance
         self.x, self.y = 0.0, 0.0   #coordinates of the robot
-
-        #ns : Name of the robot, like robot_1, robot_2 etc.
-        #To be used for your subscriber and publisher with the robot itself
         self.robot_name = robot_name
 
         '''Listener and publisher'''
