@@ -3,6 +3,7 @@ import rospy
 from geometry_msgs.msg import Twist, Pose2D
 from sensor_msgs.msg import Range
 from nav_msgs.msg import Odometry
+from tf.transformations import euler_from_quaternion
 
 from evry_project_plugins.srv import DistanceToFlag
 
@@ -19,6 +20,7 @@ class Robot:
         self.angle = 0.0
         self.sonar = 0.0 #Sonar distance
         self.x, self.y = 0.0, 0.0   #coordinates of the robot
+        self.yaw = 0.0  #yaw angle of the robot
         self.robot_name = robot_name
 
         '''Listener and publisher'''
@@ -50,6 +52,15 @@ class Robot:
         """
         self.x = msg.pose.pose.position.x
         self.y = msg.pose.pose.position.y
+        quaternion = msg.pose.pose.orientation
+        quaternion_list = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
+        roll, pitch, yaw = euler_from_quaternion (quaternion_list)
+        self.yaw = yaw
+
+    def get_robot_pose(self):
+        """Method that returns the position and orientation of the robot"""
+        return self.x, self.y, self.yaw
+
 
     def constraint(self, val, min=-2.0, max=2.0):
         """Method that limits the linear and angular velocities sent to the robot
@@ -116,6 +127,7 @@ def run_demo():
         angle = 0
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
+        print("pose: ", robot.get_robot_pose())
 
 
         #Finishing by publishing the desired speed. DO NOT TOUCH.
