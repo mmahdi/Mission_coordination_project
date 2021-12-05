@@ -127,7 +127,6 @@ def run_demo():
         angle = 0
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
-        print("pose: ", robot.get_robot_pose())
 
 
         #Finishing by publishing the desired speed. DO NOT TOUCH.
