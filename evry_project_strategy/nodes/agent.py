@@ -119,6 +119,7 @@ def run_demo():
     robot = Robot(robot_name)
     print(f"Robot : {robot_name} is starting..")
 
+    distance_init = robot.getDistanceToFlag()
 
     while not rospy.is_shutdown():
         #Write here your strategy..
@@ -129,9 +130,15 @@ def run_demo():
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
 
-        velocity = robot.getDistanceToFlag()*(1-numpy.sin(robot.yaw))
-        angle = 0
-        robot.yaw+=10
+        if distance > distance_init:
+            angle = 0.03
+            velocity = robot.getDistanceToFlag()*(1-0.5*numpy.sin(robot.yaw))
+        elif distance < 3:
+            angle = 0
+            velocity = 0
+        else:
+            angle = -0.09
+            velocity = robot.getDistanceToFlag()*(1-0.5*numpy.sin(robot.yaw))
 
 
         #Finishing by publishing the desired speed. DO NOT TOUCH.
