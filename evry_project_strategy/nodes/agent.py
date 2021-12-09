@@ -129,7 +129,7 @@ def run_demo():
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
 
-        velocity = robot.getDistanceToFlag()*(1-sin(robot.yaw))
+        velocity = robot.getDistanceToFlag()*(1-numpy.sin(robot.yaw))
         angle = 0
         robot.yaw+=10
 
