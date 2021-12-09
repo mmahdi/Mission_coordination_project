@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import rospy
+import numpy
 from geometry_msgs.msg import Twist, Pose2D
 from sensor_msgs.msg import Range
 from nav_msgs.msg import Odometry
@@ -123,10 +124,14 @@ def run_demo():
         #Write here your strategy..
         print("Distance to flag :", robot.getDistanceToFlag())
 
-        velocity = 0.6
-        angle = 0.6
+        #velocity = 0.6
+        #angle = 0.6
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
+
+        velocity = robot.getDistanceToFlag()*(1-sin(robot.yaw))
+        angle = 0
+        robot.yaw+=10
 
 
         #Finishing by publishing the desired speed. DO NOT TOUCH.
