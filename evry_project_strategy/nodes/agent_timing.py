@@ -115,33 +115,35 @@ class Robot:
 
 def run_demo():
     """Main loop"""
+    # from random import randint
     robot_name = rospy.get_param("~robot_name")
     robot = Robot(robot_name)
     print(f"Robot : {robot_name} is starting..")
-
-    distance_init = robot.getDistanceToFlag()
-
+    
+    # Starting at different times
+    rospy.sleep(3 + 2 * int(robot_name[-1]))
+    
+    deltaD = 0
+    previousD = robot.getDistanceToFlag()
+    velocity = 2
+    angle = 0
     while not rospy.is_shutdown():
-        #Write here your strategy..
-        print("Distance to flag :", robot.getDistanceToFlag())
-
+        # Write here your strategy..
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
-
-        if distance > distance_init:
-            angle = 0.03
-            velocity = robot.getDistanceToFlag()*(1-0.5*numpy.sin(robot.yaw))
-        elif distance < 2:
-            angle = 0
-            velocity = 0
-        else:
-            angle = -0.092
-            velocity = robot.getDistanceToFlag()*(1-0.5*numpy.sin(robot.yaw))
-
-
+        deltaD = previousD - distance
+        previousD = distance
+        print(robot_name, "flag", round(robot.getDistanceToFlag(), 3), "sonar", sonar, 'deltaD', round(deltaD, 3))
+        if deltaD < 0:
+            print(robot_name, 'finished')
+            # going back a little to correct overshoot
+            robot.set_speed_angle(-2, 0)
+            rospy.sleep(.5)
+            robot.set_speed_angle(0, 0)
+            rospy.signal_shutdown('')
         #Finishing by publishing the desired speed. DO NOT TOUCH.
         robot.set_speed_angle(velocity,angle)
-        rospy.sleep(0.5)
+        rospy.sleep(.1)
 
 
 
