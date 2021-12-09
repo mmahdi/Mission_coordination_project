@@ -125,19 +125,17 @@ def run_demo():
         #Write here your strategy..
         print("Distance to flag :", robot.getDistanceToFlag())
 
-        #velocity = 0.6
-        #angle = 0.6
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
 
         if distance > distance_init:
             angle = 0.03
             velocity = robot.getDistanceToFlag()*(1-0.5*numpy.sin(robot.yaw))
-        elif distance < 3:
+        elif distance < 2:
             angle = 0
             velocity = 0
         else:
-            angle = -0.09
+            angle = -0.092
             velocity = robot.getDistanceToFlag()*(1-0.5*numpy.sin(robot.yaw))
 
 
