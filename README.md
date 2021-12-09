@@ -39,3 +39,19 @@ To run the roundabout strategy, open a new terminal window/tab and run the follo
 ```bash
 roslaunch evry_project_strategy agent_roundabout.launch nbr_robot:=3
 ```
+
+### Sweep
+
+To run the sweep converge strategy, open a new terminal window/tab and run the following line :
+
+```bash
+roslaunch evry_project_strategy agent_sweep.launch nbr_robot:=3
+```
+
+### Sweep converge
+
+To run the Sweep converge converge strategy, open a new terminal window/tab and run the following line :
+
+```bash
+roslaunch evry_project_strategy agent_sweep_converge.launch nbr_robot:=3
+```
