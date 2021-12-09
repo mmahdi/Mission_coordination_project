@@ -39,5 +39,3 @@ To run the roundabout strategy, open a new terminal window/tab and run the follo
 ```bash
 roslaunch evry_project_strategy agent_roundabout.launch nbr_robot:=3
 ```
-
-

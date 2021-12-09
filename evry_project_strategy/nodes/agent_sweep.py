@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import rospy
-import numpy
 from geometry_msgs.msg import Twist, Pose2D
 from sensor_msgs.msg import Range
 from nav_msgs.msg import Odometry
@@ -113,34 +112,61 @@ class Robot:
             print("Service call failed: %s"%e)
 
 
-def run_demo():
+def sweep():
     """Main loop"""
-    # from random import randint
+    #from random import randint
     robot_name = rospy.get_param("~robot_name")
     robot = Robot(robot_name)
     print(f"Robot : {robot_name} is starting..")
-    
-    # Starting at different times
-    rospy.sleep(3 + 2 * int(robot_name[-1]))
-    
+    rospy.sleep(5)
     deltaD = 0
     previousD = robot.getDistanceToFlag()
     velocity = 2
     angle = 0
+    parcourue = 0
     while not rospy.is_shutdown():
-        # Write here your strategy..
+        #Write here your strategy..
         sonar = float(robot.get_sonar())
         distance = float(robot.getDistanceToFlag())
         deltaD = previousD - distance
         previousD = distance
-        print(robot_name, "flag", round(robot.getDistanceToFlag(), 3), "sonar", sonar, 'deltaD', round(deltaD, 3))
+        print(robot_name, "flag", round(robot.getDistanceToFlag(), 3), "sonar", sonar,'parcourue', round(parcourue, 3), 'deltaD', round(deltaD, 3))
         if deltaD < 0:
             print(robot_name, 'finished')
-            # going back a little to correct overshoot
             robot.set_speed_angle(-2, 0)
             rospy.sleep(.5)
             robot.set_speed_angle(0, 0)
             rospy.signal_shutdown('')
+        else:
+            if sonar < 3:
+                print(robot_name, 'obstacle ahead')
+                velocity = 0
+            else:
+                velocity = 2
+            if parcourue > 26.5:
+                print(robot_name, "checking..")
+                seen = False
+                robot.set_speed_angle(0,1)
+                for j in range(6):
+                    if robot.get_sonar() < 4: seen = True
+                    else : None
+                    rospy.sleep(.1)
+                robot.set_speed_angle(0,-1)
+                for j in range(11):
+                    if robot.get_sonar() < 4: seen = True
+                    else : None
+                    rospy.sleep(.1)
+                robot.set_speed_angle(0,1)
+                for j in range(6):
+                    if robot.get_sonar() < 4: seen = True
+                    else : None
+                    rospy.sleep(.1)
+                robot.set_speed_angle(0,0)
+                if seen : 
+                    print(robot_name, 'sweep detected obstacle')
+                    rospy.sleep(2 * int(robot_name[-1]))
+                parcourue = -100
+        parcourue += deltaD
         #Finishing by publishing the desired speed. DO NOT TOUCH.
         robot.set_speed_angle(velocity,angle)
         rospy.sleep(.1)
@@ -150,4 +176,4 @@ def run_demo():
 if __name__ == "__main__":
     print("Running ROS..")
     rospy.init_node("Controller", anonymous = True)
-    run_demo()
+    sweep()
