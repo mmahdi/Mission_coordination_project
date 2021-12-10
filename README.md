@@ -1,4 +1,4 @@
-# Mission_coordination_project
+# Mission coordination project
 
 Connect to [RDS](https://app.theconstructsim.com/#/) with your logins.
 
